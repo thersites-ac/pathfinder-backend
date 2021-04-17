@@ -1,4 +1,7 @@
-# SETUP
+# Pathfinder-Backend
+
+### What it is
+Backend for managing Pathfinder profile data.
 
 ### Dependencies
 * Docker
