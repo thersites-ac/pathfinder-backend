@@ -1,0 +1,26 @@
+Globals:
+  Function:
+    Timeout: 8
+
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  TomblyWomblyApi:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: target/tomblywombly.jar
+      Handler: cogbog.App::handleRequest
+      Runtime: java8
+      Events:
+        GetEvent:
+          Type: Api
+          ApiFunctionAuth:
+            ApiKeyRequired: false
+          Properties:
+            Method: get
+            Path: /tomblywombly/{player}
+        PostEvent:
+          Type: Api
+          Properties:
+            Method: post
+            Path: /tomblywombly
