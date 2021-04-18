@@ -44,3 +44,8 @@ Next, run the following MySQL commands:
 
 Now you can hit the endpoints on `localhost:3000` with your HTTP client of choice.
 As of this writing, the application serves `/tomblywombly` as a REST endpoint.
+
+### Debug
+    sam local start-api --docker-network pathfinder -d 5005
+    
+The `-d 5005` sets the debug port.

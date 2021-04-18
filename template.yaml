@@ -8,7 +8,7 @@ Resources:
   TomblyWomblyApi:
     Type: AWS::Serverless::Function
     Properties:
-      MemorySize: 1024
+      MemorySize: 512
       CodeUri: target/tomblywombly.jar
       Handler: cogbog.App::handleRequest
       Runtime: java8
@@ -20,8 +20,17 @@ Resources:
           Properties:
             Method: get
             Path: /tomblywombly/{id}
+        PutEvent:
+          Type: Api
+          ApiFunctionAuth:
+            ApiKeyRequired: false
+          Properties:
+            Method: put
+            Path: /tomblywombly
         PostEvent:
           Type: Api
+          ApiFunctionAuth:
+            ApiKeyRequired: false
           Properties:
             Method: post
-            Path: /tomblywombly
+            Path: /tomblywombly/{id}
