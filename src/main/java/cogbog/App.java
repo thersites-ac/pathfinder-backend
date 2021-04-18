@@ -36,8 +36,6 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             branchOnMethod(request, response);
         } catch (BadPathParametersException ex) {
             logger.error(ex.toString());
-        } catch (UnrecognizedPropertyException ex) {
-            logger.error(ex.toString());
             response.setStatusCode(400);
         } catch (JsonMappingException ex) {
             logger.error(ex.toString());
@@ -67,6 +65,8 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             case "POST":
                 profileService.doPost(request, response);
                 break;
+            case "DELETE":
+                profileService.doDelete(request, response);
             default:
                 throw new BadHttpMethodException("Unsupported: " + request.getHttpMethod());
         }

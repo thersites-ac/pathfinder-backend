@@ -18,8 +18,11 @@ public interface ProfileService {
         throw new BadHttpMethodException(request.getHttpMethod());
     }
 
+    public default void doDelete(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
+        throw new BadHttpMethodException(request.getHttpMethod());
+    }
+
     public default void healthcheck(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) {
         response.setStatusCode(200);
     }
-
 }

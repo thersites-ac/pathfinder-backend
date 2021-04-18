@@ -58,6 +58,16 @@ public class ProfileServiceImpl implements ProfileService {
         response.setStatusCode(200);
     }
 
+    @Override
+    public void doDelete(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
+        logger.debug("DELETE");
+        int id = getParam(request, "id");
+        logger.info("profile id: {}", id);
+
+        profileDao.deleteProfile(id);
+        response.setStatusCode(200);
+    }
+
     private int getParam(APIGatewayProxyRequestEvent request, String id) throws BadPathParametersException {
         Map<String, String> params = request.getPathParameters();
         if (params == null) {
