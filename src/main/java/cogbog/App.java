@@ -1,11 +1,14 @@
 package cogbog;
 
+import cogbog.exception.BadHttpMethodException;
+import cogbog.exception.BadPathParametersException;
+import cogbog.service.ProfileService;
+import cogbog.service.ProfileServiceImpl;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,105 +26,50 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
     }
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-    private ProfileDao profileDao = new ProfileDao();
+    private ProfileService profileService = new ProfileServiceImpl();
 
-    public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent requestEvent, Context context) {
+    public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
         logger.debug("INIT");
-        String method = requestEvent.getHttpMethod();
-        APIGatewayProxyResponseEvent responseEvent = new APIGatewayProxyResponseEvent();
-        responseEvent.setHeaders(defaultHeaders);
+        APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
+        response.setHeaders(defaultHeaders);
+        try {
+            branchOnMethod(request, response);
+        } catch (BadPathParametersException ex) {
+            logger.error(ex.toString());
+        } catch (UnrecognizedPropertyException ex) {
+            logger.error(ex.toString());
+            response.setStatusCode(400);
+        } catch (JsonMappingException ex) {
+            logger.error(ex.toString());
+            response.setStatusCode(400);
+        } catch (NoResultException ex) {
+            logger.error(ex.toString());
+            response.setStatusCode(404);
+        } catch (BadHttpMethodException ex) {
+            response.setBody(ex.getMessage());
+            response.setStatusCode(405);
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+            response.setStatusCode(500);
+        }
+        return response;
+    }
+
+    private void branchOnMethod(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
+        String method = request.getHttpMethod();
         switch (method) {
             case "GET":
-                doGet(requestEvent, responseEvent, context);
+                profileService.doGet(request, response);
                 break;
             case "PUT":
-                doPut(requestEvent, responseEvent);
+                profileService.doPut(request, response);
                 break;
             case "POST":
-                doPost(requestEvent, responseEvent);
+                profileService.doPost(request, response);
                 break;
             default:
-                badMethod(requestEvent, responseEvent);
-                break;
+                throw new BadHttpMethodException("Unsupported: " + request.getHttpMethod());
         }
-        return responseEvent;
-    }
-
-    private void doGet(APIGatewayProxyRequestEvent requestEvent, APIGatewayProxyResponseEvent responseEvent, Context context) {
-        logger.info("GET");
-        // need to handle case where profileId isn't given on the path
-        String profileIdParam = requestEvent.getPathParameters().get("id");
-        int profileId = Integer.parseInt(profileIdParam);
-        logger.info("profile id: {}", profileId);
-        try {
-            Profile profile = profileDao.findProfile(profileId);
-            ObjectMapper objectMapper = new ObjectMapper();
-            responseEvent.setBody(objectMapper.writeValueAsString(profile));
-            responseEvent.setStatusCode(200);
-        } catch (NoResultException e) {
-            logger.info(e.toString());
-            responseEvent.setBody("Not found: " + profileId);
-            responseEvent.setStatusCode(404);
-        } catch (Exception e) {
-            logger.error(e.toString());
-            responseEvent.setStatusCode(500);
-        }
-    }
-
-    private void doPut(APIGatewayProxyRequestEvent requestEvent, APIGatewayProxyResponseEvent responseEvent) {
-        logger.info("POST");
-        String body = requestEvent.getBody();
-        logger.info("body: {}", body);
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Profile profile = objectMapper.readValue(body, Profile.class);
-            profileDao.createProfile(profile);
-            responseEvent.setBody(objectMapper.writeValueAsString(profile));
-            responseEvent.setStatusCode(201);
-        } catch (UnrecognizedPropertyException e) {
-            logger.info(e.toString());
-            responseEvent.setStatusCode(400);
-        } catch (JsonMappingException e) {
-            logger.error(e.toString());
-            responseEvent.setStatusCode(400);
-        } catch (Exception e) {
-            logger.error(e.toString());
-            responseEvent.setStatusCode(500);
-        }
-    }
-
-    private void doPost(APIGatewayProxyRequestEvent requestEvent, APIGatewayProxyResponseEvent responseEvent) {
-        logger.info("POST");
-        String body = requestEvent.getBody();
-        logger.info("body: {}", body);
-        // need to handle various exceptiosn here
-        String profileIdParam = requestEvent.getPathParameters().get("id");
-        int profileId = Integer.parseInt(profileIdParam);
-        logger.info("profile id: {}", profileId);
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Profile profile = objectMapper.readValue(body, Profile.class);
-            profile = profileDao.updateProfile(profileId, profile);
-            responseEvent.setBody(objectMapper.writeValueAsString(profile));
-            responseEvent.setStatusCode(200);
-            // JSON-related boilerplate should be factored out
-        } catch (NoResultException e) {
-            logger.info(e.toString());
-            responseEvent.setBody("Not found: " + profileId);
-            responseEvent.setStatusCode(404);
-        } catch (JsonMappingException e) {
-            logger.error(e.toString());
-            responseEvent.setStatusCode(400);
-        } catch (Exception e) {
-            logger.error(e.toString());
-            responseEvent.setStatusCode(500);
-        }
-
-    }
-
-    private void badMethod(APIGatewayProxyRequestEvent requestEvent, APIGatewayProxyResponseEvent responseEvent) {
-        logger.info("Unsupported method: {}", requestEvent.getHttpMethod());
-        responseEvent.setStatusCode(405);
     }
 
 }

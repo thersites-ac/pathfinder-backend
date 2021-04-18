@@ -1,7 +1,7 @@
 # Pathfinder-Backend
 
 ### What it is
-Backend for managing Pathfinder profile data.
+Backend for managing Pathfinder profile data, built for AWS Lambda infra, for cheap bastards expecting low traffic.
 
 ### Dependencies
 * Docker
@@ -14,12 +14,10 @@ Backend for managing Pathfinder profile data.
 Run:
 
     docker network create pathfinder
-    docker run --name mysql --network pathfinder -d mysql/mysql-server:8.0.23
+    docker run --name mysql --network pathfinder -d -p 3307:3306 mysql/mysql-server:8.0.23
    
 You can stop the docker container or start it up again any time with `docker stop mysql` and `docker start mysql`.
-
-### To create the database and user credentials locally
-Run:
+Next, create the database and user credentials locally. Run:
 
     docker logs mysql 2>/dev/null | grep GENERATED
     
@@ -36,6 +34,8 @@ Next, run the following MySQL commands:
     > CREATE USER 'pathfinder'@'%' IDENTIFIED BY 'pathfinder';
     > GRANT ALL PRIVILEGES ON pathfinder.* TO 'pathfinder'@'%';
 
+You can end the MySQL session now with `\q`; you won't need to come back to it.
+
 ### To build the code
     mvn clean package
 
@@ -48,13 +48,13 @@ As of this writing, the application serves `/tomblywombly` as a REST endpoint.
 ### Debug
     sam local start-api --docker-network pathfinder -d 5005
     
-The switch `-d 5005` sets the debug port.
+The switch `-d 5005` sets the debug port. Whenever a request comes in now, SAM will wait for you to connect a remote debugger over port 5005 before invoking the api.
 
 
 ### TODO
 * testing
-    * implement ProfileDaoTests
-    * Add and implement AppTests
+    * Add and implement Service tests
+    * App tests?
 * split Service from App, which should help...
     * remove boilerplate
     * handle exceptions relating to path params

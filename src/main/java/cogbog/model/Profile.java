@@ -1,4 +1,4 @@
-package cogbog;
+package cogbog.model;
 
 import lombok.Data;
 
