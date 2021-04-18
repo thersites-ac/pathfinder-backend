@@ -54,7 +54,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
         int profileId = Integer.parseInt(profileIdParam);
         logger.info("profile id: {}", profileId);
         try {
-            Profile profile = profileDao.getProfile(profileId);
+            Profile profile = profileDao.findProfile(profileId);
             ObjectMapper objectMapper = new ObjectMapper();
             responseEvent.setBody(objectMapper.writeValueAsString(profile));
             responseEvent.setStatusCode(200);

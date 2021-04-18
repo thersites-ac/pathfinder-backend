@@ -53,5 +53,8 @@ The switch `-d 5005` sets the debug port.
 
 ### TODO
 * testing
-* remove the boilerplate
-* handle exceptions relating to path params
+    * implement ProfileDaoTests
+    * Add and implement AppTests
+* split Service from App, which should help...
+    * remove boilerplate
+    * handle exceptions relating to path params

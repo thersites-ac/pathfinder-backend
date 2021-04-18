@@ -33,7 +33,7 @@ public class ProfileDao {
         return profile.getId();
     }
 
-    public Profile getProfile(int profileId) {
+    public Profile findProfile(int profileId) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         try {
             TypedQuery<Profile> typedQuery = entityManager.createQuery(SELECT_QUERY, Profile.class);
