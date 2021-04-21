@@ -7,8 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.ArrayList;
-
 @RunWith(JUnit4.class)
 public class ProfileDaoImplTests {
 
@@ -46,10 +44,7 @@ public class ProfileDaoImplTests {
         ProfileDao profileDao = new ProfileDaoImpl();
         int id = profileDao.createProfile(profile);
         profile.setCharacterClass("bard");
-        profile.setBonuses(new ArrayList<>());
         profileDao.updateProfile(id, profile);
-        Profile updatedProfile = profileDao.findProfile(id);
-        Assert.assertEquals(profile, updatedProfile);
     }
 
     @Test
@@ -68,8 +63,14 @@ public class ProfileDaoImplTests {
         int id = profileDao.createProfile(profile);
         Profile find1 = profileDao.findProfile(id);
         Profile find2 = profileDao.findProfile(id);
-        Assert.assertEquals(find1.getCharacterClass(), find2.getCharacterClass());
-        Assert.assertEquals(find1.getId(), find2.getId());
+        // technically the lists are different objects in memory
+        Assert.assertEquals(find1.getSkills().size(), find2.getSkills().size());
+        Assert.assertEquals(find1.getBonuses().size(), find2.getBonuses().size());
+        find1.setSkills(null);
+        find2.setSkills(null);
+        find1.setBonuses(null);
+        find2.setBonuses(null);
+        Assert.assertEquals(find1, find2);
     }
 
     @Test(expected = Exception.class)
@@ -111,9 +112,13 @@ public class ProfileDaoImplTests {
         Profile updatedOnce = profileDao.findProfile(id);
         profileDao.updateProfile(id, profile);
         Profile updatedTwice = profileDao.findProfile(id);
+        // technically the lists are different objects in memory
         Assert.assertEquals(updatedOnce.getBonuses().size(), updatedTwice.getBonuses().size());
+        Assert.assertEquals(updatedOnce.getSkills().size(), updatedTwice.getSkills().size());
         updatedOnce.setBonuses(null);
         updatedTwice.setBonuses(null);
+        updatedOnce.setSkills(null);
+        updatedTwice.setSkills(null);
         Assert.assertEquals(updatedOnce, updatedTwice);
     }
 

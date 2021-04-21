@@ -47,6 +47,9 @@ public class Profile implements Serializable {
     @OneToMany(targetEntity = Bonus.class, mappedBy = "owner")
     private List<Bonus> bonuses;
 
+    @OneToMany(targetEntity = Skill.class, mappedBy = "owner")
+    private List<Skill> skills;
+
     public void superimpose(Profile profile) {
         assert id == profile.id;
         characterClass = profile.characterClass == null ? characterClass : profile.characterClass;

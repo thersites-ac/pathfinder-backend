@@ -5,6 +5,7 @@
     <persistence-unit name="cogbog.model.pathfinder">
         <class>cogbog.model.Bonus</class>
         <class>cogbog.model.Profile</class>
+        <class>cogbog.model.Skill</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>

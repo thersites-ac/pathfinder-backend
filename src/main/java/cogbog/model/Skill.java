@@ -25,4 +25,5 @@ public class Skill implements Serializable {
 
     @Column
     private Integer owner;
+
 }
