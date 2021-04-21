@@ -2,14 +2,14 @@ package cogbog;
 
 import cogbog.exception.BadHttpMethodException;
 import cogbog.exception.BadPathParametersException;
-import cogbog.service.ProfileService;
-import cogbog.service.ProfileServiceImpl;
+import cogbog.model.Profile;
+import cogbog.service.RestService;
+import cogbog.service.impl.ProfileRestServiceImpl;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
     }
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-    private ProfileService profileService = new ProfileServiceImpl();
+    private RestService<Profile> profileService = new ProfileRestServiceImpl();
 
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
         logger.debug("INIT");

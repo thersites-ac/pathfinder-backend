@@ -1,7 +1,6 @@
-package cogbog;
+package cogbog.dao;
 
-import cogbog.dao.ProfileDao;
-import cogbog.dao.ProfileDaoImpl;
+import cogbog.dao.impl.ProfileDaoImpl;
 import cogbog.model.Profile;
 import org.junit.Assert;
 import org.junit.Test;
@@ -82,11 +81,9 @@ public class ProfileDaoImplTests {
     public void updateFailsAfterDelete() throws Exception {
         ProfileDao profileDao = new ProfileDaoImpl();
         Profile profile = new Profile();
-        try {
-            profileDao.deleteProfile(42);
-        } catch (Exception e) {
-        }
-        profileDao.updateProfile(42, profile);
+        int id = profileDao.createProfile(profile);
+        profileDao.deleteProfile(id);
+        profileDao.updateProfile(id, profile);
     }
 
     @Test

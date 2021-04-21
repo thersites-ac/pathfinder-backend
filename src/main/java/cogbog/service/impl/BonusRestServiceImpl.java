@@ -1,9 +1,10 @@
-package cogbog.service;
+package cogbog.service.impl;
 
-import cogbog.model.Profile;
-import cogbog.dao.ProfileDao;
-import cogbog.dao.ProfileDaoImpl;
+import cogbog.dao.BonusDao;
+import cogbog.dao.impl.BonusDaoImpl;
 import cogbog.exception.BadPathParametersException;
+import cogbog.model.Bonus;
+import cogbog.service.RestService;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,21 +13,21 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class ProfileServiceImpl implements ProfileService {
+public class BonusRestServiceImpl implements RestService<Bonus> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProfileService.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestService.class);
 
-    private ProfileDao profileDao = new ProfileDaoImpl();
+    private BonusDao bonusDao = new BonusDaoImpl();
 
     @Override
     public void doGet(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
         logger.debug("GET");
-        int profileId = getParam(request, "id");
-        logger.info("profile id: {}", profileId);
+        int id = getParam(request, "id");
+        logger.info("bonus id: {}", id);
 
-        Profile profile = profileDao.findProfile(profileId);
+        Bonus bonus = bonusDao.findBonus(id);
         ObjectMapper objectMapper = new ObjectMapper();
-        response.setBody(objectMapper.writeValueAsString(profile));
+        response.setBody(objectMapper.writeValueAsString(bonus));
         response.setStatusCode(200);
     }
 
@@ -36,10 +37,10 @@ public class ProfileServiceImpl implements ProfileService {
         String body = request.getBody();
         logger.info("body: {}", body);
         ObjectMapper objectMapper = new ObjectMapper();
-        Profile profile = objectMapper.readValue(body, Profile.class);
+        Bonus bonus = objectMapper.readValue(body, Bonus.class);
 
-        profileDao.createProfile(profile);
-        response.setBody(objectMapper.writeValueAsString(profile));
+        bonusDao.createBonus(bonus);
+        response.setBody(objectMapper.writeValueAsString(bonus));
         response.setStatusCode(201);
     }
 
@@ -48,13 +49,13 @@ public class ProfileServiceImpl implements ProfileService {
         logger.debug("POST");
         String body = request.getBody();
         logger.info("body: {}", body);
-        int profileId = getParam(request, "id");
-        logger.info("profile id: {}", profileId);
+        int id = getParam(request, "id");
+        logger.info("bonus id: {}", id);
         ObjectMapper objectMapper = new ObjectMapper();
-        Profile profile = objectMapper.readValue(body, Profile.class);
+        Bonus bonus = objectMapper.readValue(body, Bonus.class);
 
-        profile = profileDao.updateProfile(profileId, profile);
-        response.setBody(objectMapper.writeValueAsString(profile));
+        bonus = bonusDao.updateBonus(id, bonus);
+        response.setBody(objectMapper.writeValueAsString(bonus));
         response.setStatusCode(200);
     }
 
@@ -62,9 +63,9 @@ public class ProfileServiceImpl implements ProfileService {
     public void doDelete(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
         logger.debug("DELETE");
         int id = getParam(request, "id");
-        logger.info("profile id: {}", id);
+        logger.info("bonus id: {}", id);
 
-        profileDao.deleteProfile(id);
+        bonusDao.deleteBonus(id);
         response.setStatusCode(200);
     }
 

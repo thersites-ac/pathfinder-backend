@@ -25,40 +25,37 @@ public class Profile implements Serializable {
 
     @Column
     private Integer strength;
-
     @Column
     private Integer dexterity;
-
     @Column
     private Integer constitution;
-
     @Column
     private Integer wisdom;
-
     @Column
     private Integer intelligence;
-
     @Column
     private Integer charisma;
 
+    @Column
+    private Integer fortitude;
+    @Column
+    private Integer reflex;
+    @Column
+    private Integer will;
+
     public void superimpose(Profile profile) {
         assert id == profile.id;
-        if (profile.characterClass != null)
-            characterClass = profile.characterClass;
-        if (profile.characterName != null)
-            characterName = profile.characterName;
-        if (profile.strength != null)
-            strength = profile.strength;
-        if (profile.dexterity != null)
-            dexterity = profile.dexterity;
-        if (profile.constitution != null)
-            constitution = profile.constitution;
-        if (profile.wisdom != null)
-            wisdom = profile.wisdom;
-        if (profile.intelligence != null)
-            intelligence = profile.intelligence;
-        if (profile.charisma != null)
-            charisma = profile.charisma;
+        characterClass = profile.characterClass == null ? characterClass : profile.characterClass;
+        characterName = profile.characterName == null ? characterName : profile.characterName;
+        strength = profile.strength == null ? strength : profile.strength;
+        dexterity = profile.dexterity == null ? dexterity : profile.dexterity;
+        constitution = profile.constitution == null ? constitution : profile.constitution;
+        wisdom = profile.wisdom == null ? wisdom : profile.wisdom;
+        intelligence = profile.intelligence == null ? intelligence : profile.intelligence;
+        charisma = profile.charisma == null ? charisma : profile.charisma;
+        fortitude = profile.fortitude == null ? fortitude : profile.fortitude;
+        reflex = profile.reflex == null ? reflex : profile.reflex;
+        will = profile.will == null ? will : profile.will;
     }
 
 }

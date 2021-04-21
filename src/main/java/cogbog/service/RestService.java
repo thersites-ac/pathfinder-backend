@@ -4,7 +4,7 @@ import cogbog.exception.BadHttpMethodException;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 
-public interface ProfileService {
+public interface RestService<T> {
 
     public default void doGet(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
         throw new BadHttpMethodException(request.getHttpMethod());
