@@ -2,19 +2,8 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
-    <persistence-unit name="cogbog.model.Profile">
+    <persistence-unit name="cogbog.model.pathfinder">
         <class>cogbog.model.Profile</class>
-        <properties>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/pathfinder"/>
-            <property name="javax.persistence.jdbc.user" value="pathfinder"/>
-            <property name="javax.persistence.jdbc.password" value="pathfinder"/>
-            <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
-        </properties>
-    </persistence-unit>
-    <persistence-unit name="cogbog.model.Bonus">
         <class>cogbog.model.Bonus</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
@@ -26,4 +15,5 @@
             <property name="hibernate.hbm2ddl.auto" value="create"/>
         </properties>
     </persistence-unit>
+
 </persistence>

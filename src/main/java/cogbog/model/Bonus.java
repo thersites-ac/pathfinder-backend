@@ -25,6 +25,8 @@ public class Bonus implements Serializable {
     @Column(name = "is_tmp")
     private Boolean isTemporary;
 
+    private Profile owner;
+
     public void superimpose(Bonus bonus) {
         assert id == bonus.id;
         type = bonus.type == null? type: bonus.type;

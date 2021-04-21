@@ -53,8 +53,7 @@ The switch `-d 5005` sets the debug port. Whenever a request comes in now, SAM w
 ### TODO
 * testing
     * Add and implement Service tests
-    * App tests?
-* split Service from App, which should help...
-    * remove boilerplate
-    * handle exceptions relating to path params
-* uncouple ProfileDaoImpl from ProfileServiceImpl 
+        - Do I need a distinct Bonus DAO?
+        - Should I add a Skill DAO?
+    * Tests validating linked behavior of Profile, Bonus, Skill
+* incorporate Guice or some other dependency injection

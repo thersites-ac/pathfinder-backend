@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Entity
@@ -42,6 +43,9 @@ public class Profile implements Serializable {
     private Integer reflex;
     @Column
     private Integer will;
+
+    @OneToMany(targetEntity = Bonus.class, mappedBy = "owner")
+    private List<Bonus> bonuses;
 
     public void superimpose(Profile profile) {
         assert id == profile.id;

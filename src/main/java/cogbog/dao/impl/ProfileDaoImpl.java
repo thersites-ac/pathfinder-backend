@@ -11,7 +11,7 @@ public class ProfileDaoImpl implements ProfileDao {
 
     private static final String SELECT_QUERY = "Select p from Profile p where p.id = :id";
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY
-            = Persistence.createEntityManagerFactory("cogbog.model.Profile");
+            = Persistence.createEntityManagerFactory("cogbog.model.pathfinder");
 
     private static final Logger logger = LoggerFactory.getLogger(ProfileDao.class);
 
