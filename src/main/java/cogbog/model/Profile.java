@@ -60,6 +60,7 @@ public class Profile implements Serializable {
         fortitude = profile.fortitude == null ? fortitude : profile.fortitude;
         reflex = profile.reflex == null ? reflex : profile.reflex;
         will = profile.will == null ? will : profile.will;
+        bonuses = profile.bonuses == null ? bonuses : profile.bonuses;
     }
 
 }
