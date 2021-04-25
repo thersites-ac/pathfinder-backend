@@ -1,3 +1,7 @@
 .idea
 target
 pathfinder-backend.iml
+terraform.tfstate
+terraform.tfstate.backup
+.terraform.lock.hcl
+.terraform

@@ -20,16 +20,17 @@ import java.util.Map;
 public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
     private static Map<String, String> defaultHeaders;
+    private static RestService<Profile> profileService;
     static {
         defaultHeaders = new HashMap<>();
         defaultHeaders.put("Content-Type", "application/json");
+        profileService = new ProfileRestServiceImpl();
     }
+
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-    private RestService<Profile> profileService = new ProfileRestServiceImpl();
-
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
-        logger.debug("INIT");
+        logger.info("Invoked with request {}", request.toString());
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
         response.setHeaders(defaultHeaders);
         try {
