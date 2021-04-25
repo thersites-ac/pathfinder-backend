@@ -12,7 +12,7 @@ public class SkillDaoImpl implements SkillDao {
 
     private static final String SELECT_QUERY = "Select s from Skill s where s.id = :id";
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY =
-            Persistence.createEntityManagerFactory("cogbog.model.pathfinder");
+            Persistence.createEntityManagerFactory("cogbog.pathfinder");
     private static final Logger logger = LoggerFactory.getLogger(SkillDao.class);
 
     @Override

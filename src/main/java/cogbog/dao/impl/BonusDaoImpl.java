@@ -11,7 +11,7 @@ public class BonusDaoImpl implements BonusDao {
 
     private static final String SELECT_QUERY = "Select b from Bonus b where b.id = :id";
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY
-            = Persistence.createEntityManagerFactory("cogbog.model.pathfinder");
+            = Persistence.createEntityManagerFactory("cogbog.pathfinder");
 
     private static final Logger logger = LoggerFactory.getLogger(BonusDao.class);
 
