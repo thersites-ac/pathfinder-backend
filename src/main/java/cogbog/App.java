@@ -30,6 +30,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
+
         logger.info("Invoked with request {}", request.toString());
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
         response.setHeaders(defaultHeaders);
