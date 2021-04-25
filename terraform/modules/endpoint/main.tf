@@ -26,10 +26,6 @@ resource "aws_iam_role" "pathfinder_backend_role" {
 EOF
 }
 
-variable "jarfile" {
-  default = "../target/tomblywombly.jar"
-}
-
 resource "aws_lambda_function" "pathfinder_backend" {
   filename = var.jarfile
   function_name = var.name
@@ -100,18 +96,10 @@ resource "aws_api_gateway_integration" "lambda" {
 //  uri = aws_lambda_function.pathfinder_backend.invoke_arn
 //}
 
-resource "aws_api_gateway_deployment" "dev" {
+resource "aws_api_gateway_deployment" "deployment" {
   depends_on = [
     aws_api_gateway_integration.lambda
   ]
   rest_api_id = aws_api_gateway_rest_api.pathfinder_backend_api.id
-  stage_name = "dev"
-}
-
-output "base_url" {
-  value = aws_api_gateway_deployment.dev.invoke_url
-}
-
-output "rest_api_id" {
-  value = aws_api_gateway_integration.lambda.rest_api_id
+  stage_name = var.stage_name
 }

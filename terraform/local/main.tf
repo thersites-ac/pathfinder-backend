@@ -16,3 +16,13 @@ provider "aws" {
     apigateway = "http://localhost:4566"
   }
 }
+
+module "lambda_endpoint" {
+  source = "../modules/endpoint"
+  stage_name = var.stage_name
+  jarfile = "../../target/tomblywombly.jar"
+}
+
+output "local_endpoint" {
+  value = "localhost:4566/restapis/${module.lambda_endpoint.rest_api_id}/${var.stage_name}/_user_request_"
+}
