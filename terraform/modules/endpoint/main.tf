@@ -11,15 +11,6 @@ resource "aws_iam_role" "pathfinder_backend_role" {
       },
       "Effect": "Allow",
       "Sid": ""
-    },
-    {
-      "Action": [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
-      ],
-      "Resource": "arn:aws:logs:*:*:*",
-      "Effect": "Allow"
     }
   ]
 }
@@ -34,8 +25,36 @@ resource "aws_lambda_function" "pathfinder_backend" {
   runtime = "java8"
   source_code_hash = filebase64sha256(var.jarfile)
   depends_on = [
-    aws_cloudwatch_log_group.pathfinder_backend_logs
+    aws_cloudwatch_log_group.pathfinder_backend_logs,
+    aws_iam_role_policy_attachment.lambda_logging_attachment
   ]
+}
+
+resource "aws_iam_policy" "lambda_logging" {
+  name = var.name
+  path = "/"
+  description = "IAM policy to allow Pathfinder application logging"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logging_attachment" {
+  policy_arn = aws_iam_policy.lambda_logging.arn
+  role = aws_iam_role.pathfinder_backend_role.name
 }
 
 resource "aws_cloudwatch_log_group" "pathfinder_backend_logs" {
