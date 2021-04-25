@@ -1,14 +1,30 @@
 package cogbog.dao;
 
+import cogbog.dao.impl.BonusDaoImpl;
 import cogbog.dao.impl.ProfileDaoImpl;
+import cogbog.dao.impl.SkillDaoImpl;
+import cogbog.model.Bonus;
 import cogbog.model.Profile;
+import cogbog.model.Skill;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class ProfileDaoImplTests {
+
+    private static ProfileDao profileDao;
+    private static BonusDao bonusDao;
+    private static SkillDao skillDao;
+
+    @BeforeClass
+    public static void init() {
+        profileDao = new ProfileDaoImpl();
+        bonusDao = new BonusDaoImpl();
+        skillDao = new SkillDaoImpl();
+    }
 
     @Test
     public void boots() {
@@ -17,22 +33,12 @@ public class ProfileDaoImplTests {
 
     @Test
     public void canCreate() throws Exception {
-        ProfileDao profileDao = new ProfileDaoImpl();
         Profile profile = new Profile();
         int id = profileDao.createProfile(profile);
     }
 
-    @Test(expected = Exception.class)
-    public void cannotSpecifyKey() throws Exception {
-        ProfileDao profileDao = new ProfileDaoImpl();
-        Profile profile = new Profile();
-        profile.setId(42);
-        profileDao.createProfile(profile);
-    }
-
     @Test
     public void canFindAfterCreate() throws Exception {
-        ProfileDao profileDao = new ProfileDaoImpl();
         Profile profile = new Profile();
         int id = profileDao.createProfile(profile);
         profileDao.findProfile(id);
@@ -41,7 +47,6 @@ public class ProfileDaoImplTests {
     @Test
     public void canUpdateAfterCreate() throws Exception {
         Profile profile = new Profile();
-        ProfileDao profileDao = new ProfileDaoImpl();
         int id = profileDao.createProfile(profile);
         profile.setCharacterClass("bard");
         profileDao.updateProfile(id, profile);
@@ -50,7 +55,6 @@ public class ProfileDaoImplTests {
     @Test
     public void canDeleteAfterCreate() throws Exception {
         Profile profile = new Profile();
-        ProfileDao profileDao = new ProfileDaoImpl();
         int id = profileDao.createProfile(profile);
         profileDao.deleteProfile(id);
     }
@@ -59,23 +63,14 @@ public class ProfileDaoImplTests {
     public void findIdempotent() throws Exception {
         Profile profile = new Profile();
         profile.setCharacterClass("Investigator");
-        ProfileDao profileDao = new ProfileDaoImpl();
         int id = profileDao.createProfile(profile);
         Profile find1 = profileDao.findProfile(id);
         Profile find2 = profileDao.findProfile(id);
-        // technically the lists are different objects in memory
-        Assert.assertEquals(find1.getSkills().size(), find2.getSkills().size());
-        Assert.assertEquals(find1.getBonuses().size(), find2.getBonuses().size());
-        find1.setSkills(null);
-        find2.setSkills(null);
-        find1.setBonuses(null);
-        find2.setBonuses(null);
-        Assert.assertEquals(find1, find2);
+        Assert.assertEquals(find1.toString(), find2.toString());
     }
 
     @Test(expected = Exception.class)
     public void findFailsAfterDelete() throws Exception {
-        ProfileDao profileDao = new ProfileDaoImpl();
         Profile profile = new Profile();
         int id = profileDao.createProfile(profile);
         profileDao.deleteProfile(id);
@@ -85,7 +80,6 @@ public class ProfileDaoImplTests {
 
     @Test(expected = Exception.class)
     public void updateFailsAfterDelete() throws Exception {
-        ProfileDao profileDao = new ProfileDaoImpl();
         Profile profile = new Profile();
         int id = profileDao.createProfile(profile);
         profileDao.deleteProfile(id);
@@ -94,7 +88,6 @@ public class ProfileDaoImplTests {
 
     @Test
     public void canFindAfterUpdate() throws Exception {
-        ProfileDao profileDao = new ProfileDaoImpl();
         Profile profile = new Profile();
         int id = profileDao.createProfile(profile);
         profile.setCharacterName("Toby");
@@ -105,30 +98,46 @@ public class ProfileDaoImplTests {
     @Test
     public void updateIdempotent() throws Exception {
         Profile profile = new Profile();
-        ProfileDao profileDao = new ProfileDaoImpl();
         int id = profileDao.createProfile(profile);
         profile.setCharacterClass("bard");
         profileDao.updateProfile(id, profile);
         Profile updatedOnce = profileDao.findProfile(id);
         profileDao.updateProfile(id, profile);
         Profile updatedTwice = profileDao.findProfile(id);
-        // technically the lists are different objects in memory
-        Assert.assertEquals(updatedOnce.getBonuses().size(), updatedTwice.getBonuses().size());
-        Assert.assertEquals(updatedOnce.getSkills().size(), updatedTwice.getSkills().size());
-        updatedOnce.setBonuses(null);
-        updatedTwice.setBonuses(null);
-        updatedOnce.setSkills(null);
-        updatedTwice.setSkills(null);
-        Assert.assertEquals(updatedOnce, updatedTwice);
+        Assert.assertEquals(updatedOnce.toString(), updatedTwice.toString());
     }
 
     @Test(expected = Exception.class)
     public void cannotDeleteTwice() throws Exception {
-        ProfileDao profileDao = new ProfileDaoImpl();
         Profile profile = new Profile();
         int id = profileDao.createProfile(profile);
         profileDao.deleteProfile(id);
         profileDao.deleteProfile(id);
     }
 
+    @Test
+    public void findProfileTurnsUpLinkedSkills() throws Exception {
+        Profile profile = new Profile();
+        int id = profileDao.createProfile(profile);
+        Skill skill = new Skill();
+        skill.setOwner(id);
+        skillDao.createSkill(skill);
+        Assert.assertNull(profile.getSkills());
+        profile = profileDao.findProfile(id);
+        Assert.assertNotNull(profile.getSkills());
+        Assert.assertTrue(profile.getSkills().contains(skill));
+    }
+
+    @Test
+    public void findProfileTurnsUpLinkedBonuses() throws Exception {
+        Profile profile = new Profile();
+        int id = profileDao.createProfile(profile);
+        Bonus bonus = new Bonus();
+        bonus.setOwner(id);
+        bonusDao.createBonus(bonus);
+        Assert.assertNull(profile.getBonuses());
+        profile = profileDao.findProfile(id);
+        Assert.assertNotNull(profile.getBonuses());
+        Assert.assertTrue(profile.getBonuses().contains(bonus));
+    }
 }

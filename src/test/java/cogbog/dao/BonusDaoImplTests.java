@@ -3,12 +3,20 @@ package cogbog.dao;
 import cogbog.dao.impl.BonusDaoImpl;
 import cogbog.model.Bonus;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class BonusDaoImplTests {
+
+    private static BonusDao bonusDao;
+
+    @BeforeClass
+    public static void init() {
+        bonusDao = new BonusDaoImpl();
+    }
 
     @Test
     public void boots() {
@@ -17,22 +25,12 @@ public class BonusDaoImplTests {
 
     @Test
     public void canCreate() throws Exception {
-        BonusDao bonusDao = new BonusDaoImpl();
         Bonus bonus = new Bonus();
         int id = bonusDao.createBonus(bonus);
     }
 
-    @Test(expected = Exception.class)
-    public void cannotSpecifyKey() throws Exception {
-        BonusDao bonusDao = new BonusDaoImpl();
-        Bonus bonus = new Bonus();
-        bonus.setId(42);
-        bonusDao.createBonus(bonus);
-    }
-
     @Test
     public void canFindAfterCreate() throws Exception {
-        BonusDao bonusDao = new BonusDaoImpl();
         Bonus bonus = new Bonus();
         int id = bonusDao.createBonus(bonus);
         bonusDao.findBonus(id);
@@ -41,7 +39,6 @@ public class BonusDaoImplTests {
     @Test
     public void canUpdateAfterCreate() throws Exception {
         Bonus bonus = new Bonus();
-        BonusDao bonusDao = new BonusDaoImpl();
         int id = bonusDao.createBonus(bonus);
         bonus.setName("bless");
         bonusDao.updateBonus(id, bonus);
@@ -52,14 +49,12 @@ public class BonusDaoImplTests {
     @Test
     public void canDeleteAfterCreate() throws Exception {
         Bonus bonus = new Bonus();
-        BonusDao bonusDao = new BonusDaoImpl();
         int id = bonusDao.createBonus(bonus);
         bonusDao.deleteBonus(id);
     }
 
     @Test
     public void findIdempotent() throws Exception {
-        BonusDao bonusDao = new BonusDaoImpl();
         Bonus bonus = new Bonus();
         int id = bonusDao.createBonus(bonus);
         Bonus find1 = bonusDao.findBonus(id);
@@ -69,7 +64,6 @@ public class BonusDaoImplTests {
 
     @Test(expected = Exception.class)
     public void findFailsAfterDelete() throws Exception {
-        BonusDao bonusDao = new BonusDaoImpl();
         Bonus bonus = new Bonus();
         int id = bonusDao.createBonus(bonus);
         bonusDao.deleteBonus(id);
@@ -79,7 +73,6 @@ public class BonusDaoImplTests {
 
     @Test(expected = Exception.class)
     public void updateFailsAfterDelete() throws Exception {
-        BonusDao bonusDao = new BonusDaoImpl();
         Bonus bonus = new Bonus();
         int id = bonusDao.createBonus(bonus);
         bonusDao.deleteBonus(id);
@@ -88,7 +81,6 @@ public class BonusDaoImplTests {
 
     @Test
     public void canFindAfterUpdate() throws Exception {
-        BonusDao bonusDao = new BonusDaoImpl();
         Bonus bonus = new Bonus();
         int id = bonusDao.createBonus(bonus);
         bonus.setName("Bless");
@@ -99,7 +91,6 @@ public class BonusDaoImplTests {
     @Test
     public void updateIdempotent() throws Exception {
         Bonus bonus = new Bonus();
-        BonusDao bonusDao = new BonusDaoImpl();
         int id = bonusDao.createBonus(bonus);
         bonus.setName("bless");
         bonusDao.updateBonus(id, bonus);
@@ -111,7 +102,6 @@ public class BonusDaoImplTests {
 
     @Test(expected = Exception.class)
     public void cannotDeleteTwice() throws Exception {
-        BonusDao bonusDao = new BonusDaoImpl();
         Bonus bonus = new Bonus();
         int id = bonusDao.createBonus(bonus);
         bonusDao.deleteBonus(id);

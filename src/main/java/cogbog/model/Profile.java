@@ -1,9 +1,12 @@
 package cogbog.model;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -16,6 +19,7 @@ public class Profile implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true)
+    @Setter(AccessLevel.NONE)
     private int id;
 
     @Column(name = "character_name")
@@ -44,9 +48,11 @@ public class Profile implements Serializable {
     @Column
     private Integer will;
 
+    @Setter(AccessLevel.NONE)
     @OneToMany(targetEntity = Bonus.class, mappedBy = "owner")
     private List<Bonus> bonuses;
 
+    @Setter(AccessLevel.NONE)
     @OneToMany(targetEntity = Skill.class, mappedBy = "owner")
     private List<Skill> skills;
 

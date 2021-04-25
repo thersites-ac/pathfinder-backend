@@ -1,7 +1,9 @@
 package cogbog.model;
 
 import cogbog.constant.ModType;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,6 +18,7 @@ public class Bonus implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true)
+    @Setter(AccessLevel.NONE)
     private int id;
 
     @Column
@@ -25,7 +28,8 @@ public class Bonus implements Serializable {
     @Column(name = "is_tmp")
     private Boolean isTemporary;
 
-    private Profile owner;
+    @Column
+    private Integer owner;
 
     public void superimpose(Bonus bonus) {
         assert id == bonus.id;

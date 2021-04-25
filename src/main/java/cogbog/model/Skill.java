@@ -1,6 +1,9 @@
 package cogbog.model;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,6 +18,7 @@ public class Skill implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true)
+    @Setter(AccessLevel.NONE)
     private int id;
 
     @Column
@@ -25,5 +29,12 @@ public class Skill implements Serializable {
 
     @Column
     private Integer owner;
+
+    public void superimpose(Skill skill) {
+        assert skill.getId() == id;
+        name = skill.name == null? name: skill.name;
+        points = skill.points == null? points: skill.points;
+        owner = skill.owner == null? owner: skill.owner;
+    }
 
 }

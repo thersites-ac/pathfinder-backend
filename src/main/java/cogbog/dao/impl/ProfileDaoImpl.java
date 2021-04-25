@@ -26,6 +26,7 @@ public class ProfileDaoImpl implements ProfileDao {
             entityTransaction.commit();
             logger.info("Created profile: {}", profile.toString());
         } catch (Exception ex) {
+            logger.error(ex.toString());
             rollback(entityTransaction, ex);
         } finally {
             entityManager.close();
@@ -65,6 +66,7 @@ public class ProfileDaoImpl implements ProfileDao {
             entityTransaction.commit();
             logger.info("Updated profile: {}", originalProfile.toString());
         } catch (Exception ex) {
+            logger.error(ex.toString());
             rollback(entityTransaction, ex);
         } finally {
             entityManager.close();
@@ -86,6 +88,7 @@ public class ProfileDaoImpl implements ProfileDao {
             entityManager.remove(profile);
             entityTransaction.commit();
         } catch (Exception ex) {
+            logger.error(ex.toString());
             rollback(entityTransaction, ex);
         } finally {
             entityManager.close();

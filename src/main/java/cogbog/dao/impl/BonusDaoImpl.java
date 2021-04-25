@@ -26,6 +26,7 @@ public class BonusDaoImpl implements BonusDao {
             entityTransaction.commit();
             logger.info("Created bonus: {}", bonus.toString());
         } catch (Exception ex) {
+            logger.error(ex.toString());
             rollback(entityTransaction, ex);
         } finally {
             entityManager.close();
@@ -65,6 +66,7 @@ public class BonusDaoImpl implements BonusDao {
             entityTransaction.commit();
             logger.info("Updated bonus: {}", original.toString());
         } catch (Exception ex) {
+            logger.error(ex.toString());
             rollback(entityTransaction, ex);
         } finally {
             entityManager.close();
@@ -86,6 +88,7 @@ public class BonusDaoImpl implements BonusDao {
             entityManager.remove(bonus);
             entityTransaction.commit();
         } catch (Exception ex) {
+            logger.error(ex.toString());
             rollback(entityTransaction, ex);
         } finally {
             entityManager.close();
