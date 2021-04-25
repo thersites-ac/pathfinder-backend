@@ -4,6 +4,7 @@ provider "aws" {
   secret_key = "bar"
   skip_credentials_validation = true
   skip_requesting_account_id = true
+  skip_metadata_api_check = true
 
   endpoints {
     lambda = "http://localhost:4566"
@@ -12,5 +13,6 @@ provider "aws" {
     cloudwatch = "http://localhost:4566"
     cloudwatchlogs = "http://localhost:4566"
     iam = "http://localhost:4566"
+    apigateway = "http://localhost:4566"
   }
 }
