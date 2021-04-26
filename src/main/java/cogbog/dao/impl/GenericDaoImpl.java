@@ -19,16 +19,17 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
     private static final Logger logger = LoggerFactory.getLogger(GenericDao.class);
     private static String SELECT_QUERY;
     private static EntityManagerFactory ENTITY_MANAGER_FACTORY;
-    private V witness;
 
-    // FIXME: 4/25/21 How can I validate e.g. the presence and type-correctness of the Id field?
+    private final V witness;
+
+    // FIXME: 4/25/21 Validate the presence, uniqueness, and type-correctness of the Id field
     public GenericDaoImpl(V witness) {
         this.witness = witness;
-        Optional<Field> idField = Arrays.stream(witness.getClass().getDeclaredFields())
+        Optional<Field> maybeId = Arrays.stream(witness.getClass().getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(Id.class))
                 .findFirst();
-        assert idField.isPresent();
-        Field id = idField.get();
+        assert maybeId.isPresent();
+        Field id = maybeId.get();
         SELECT_QUERY = String.format(SELECT_QUERY_TEMPLATE,
                 witness.getClass().getSimpleName(),
                 id.getName());
