@@ -17,21 +17,21 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
 
     private static final String SELECT_QUERY_TEMPLATE = "Select x from %s x where x.%s = :id";
     private static final Logger logger = LoggerFactory.getLogger(GenericDao.class);
-    private static String SELECT_QUERY;
+    private final String SELECT_QUERY;
     private static EntityManagerFactory ENTITY_MANAGER_FACTORY;
 
-    private final V witness;
+    private final Class<V> type;
 
     // FIXME: 4/25/21 Validate the presence, uniqueness, and type-correctness of the Id field
-    public GenericDaoImpl(V witness) {
-        this.witness = witness;
-        Optional<Field> maybeId = Arrays.stream(witness.getClass().getDeclaredFields())
+    public GenericDaoImpl(Class<V> type) {
+        this.type = type;
+        Optional<Field> maybeId = Arrays.stream(type.getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(Id.class))
                 .findFirst();
         assert maybeId.isPresent();
         Field id = maybeId.get();
         SELECT_QUERY = String.format(SELECT_QUERY_TEMPLATE,
-                witness.getClass().getSimpleName(),
+                type.getSimpleName(),
                 id.getName());
         if (ENTITY_MANAGER_FACTORY == null) {
             ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("cogbog.pathfinder", getConfigOverrides());
@@ -79,9 +79,9 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
         EntityManager manager = ENTITY_MANAGER_FACTORY.createEntityManager();
         V entity;
         try {
-            TypedQuery<? extends DaoData> query = manager.createQuery(SELECT_QUERY, witness.getClass());
+            TypedQuery<V> query = manager.createQuery(SELECT_QUERY, type);
             query.setParameter("id", key);
-            entity = (V) query.getSingleResult();
+            entity = query.getSingleResult();
             logger.info("Found entity {}", entity.toString());
         } finally {
             manager.close();
@@ -96,11 +96,11 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
         EntityTransaction transaction = null;
         V original = null;
         try {
-            TypedQuery<? extends DaoData> query = manager.createQuery(SELECT_QUERY, witness.getClass());
+            TypedQuery<V> query = manager.createQuery(SELECT_QUERY, type);
             query.setParameter("id", key);
             transaction = manager.getTransaction();
             transaction.begin();
-            original = (V) query.getSingleResult();
+            original = query.getSingleResult();
             original.superimpose(updates);
             manager.persist(original);
             transaction.commit();
@@ -119,11 +119,11 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
         EntityManager manager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
-            TypedQuery<? extends DaoData> query = manager.createQuery(SELECT_QUERY, witness.getClass());
+            TypedQuery<V> query = manager.createQuery(SELECT_QUERY, type);
             query.setParameter("id", key);
             transaction = manager.getTransaction();
             transaction.begin();
-            V value = (V) query.getSingleResult();
+            V value = query.getSingleResult();
             manager.remove(value);
             transaction.commit();
             logger.info("Deleted entity {}", key.toString());

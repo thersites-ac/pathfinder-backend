@@ -22,9 +22,9 @@ public class ProfileDaoImplTests {
 //        profileDao = new ProfileDaoImpl();
 //        bonusDao = new BonusDaoImpl();
 //        skillDao = new SkillDaoImpl();
-        profileDao = new GenericDaoImpl<>(new Profile());
-        bonusDao = new GenericDaoImpl<>(new Bonus());
-        skillDao = new GenericDaoImpl<>(new Skill());
+        profileDao = new GenericDaoImpl<>(Profile.class);
+        bonusDao = new GenericDaoImpl<>(Bonus.class);
+        skillDao = new GenericDaoImpl<>(Skill.class);
     }
 
     @Test

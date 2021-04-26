@@ -15,7 +15,7 @@ public class SkillDaoImplTests {
 
     @BeforeClass
     public static void init() {
-        skillDao = new GenericDaoImpl<>(new Skill());
+        skillDao = new GenericDaoImpl<>(Skill.class);
     }
 
     @Test

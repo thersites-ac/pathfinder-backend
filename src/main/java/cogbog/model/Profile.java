@@ -57,7 +57,6 @@ public class Profile implements Serializable, DaoData<Integer, Profile> {
     private List<Skill> skills;
 
     public void superimpose(Profile profile) {
-        assert id == profile.id;
         characterClass = profile.characterClass == null ? characterClass : profile.characterClass;
         characterName = profile.characterName == null ? characterName : profile.characterName;
         strength = profile.strength == null ? strength : profile.strength;

@@ -15,7 +15,7 @@ public class BonusDaoImplTests {
 
     @BeforeClass
     public static void init() {
-        bonusDao = new GenericDaoImpl<Integer, Bonus>(new Bonus()); //BonusDaoImpl();
+        bonusDao = new GenericDaoImpl<Integer, Bonus>(Bonus.class);
     }
 
     @Test

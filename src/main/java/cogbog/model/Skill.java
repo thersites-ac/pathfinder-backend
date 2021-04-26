@@ -32,7 +32,6 @@ public class Skill implements Serializable, DaoData<Integer, Skill> {
 
     @Override
     public void superimpose(Skill skill) {
-        assert skill.getId() == id;
         name = skill.name == null? name: skill.name;
         points = skill.points == null? points: skill.points;
         owner = skill.owner == null? owner: skill.owner;

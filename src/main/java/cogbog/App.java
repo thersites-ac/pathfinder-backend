@@ -9,6 +9,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
         response.setHeaders(defaultHeaders);
         try {
             branch(request, response);
-        } catch (BadPathParametersException ex) {
+        } catch (BadPathParametersException | JsonProcessingException ex) {
             logger.error(ex.toString());
             response.setStatusCode(400);
         } catch (NoResultException ex) {
