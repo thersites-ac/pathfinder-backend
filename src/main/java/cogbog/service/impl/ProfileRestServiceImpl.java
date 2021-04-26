@@ -7,19 +7,18 @@ import cogbog.exception.BadPathParametersException;
 import cogbog.service.RestService;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class ProfileRestServiceImpl implements RestService<Profile> {
+public class ProfileRestServiceImpl {
 
+    /*
     private static final Logger logger = LoggerFactory.getLogger(RestService.class);
 
     private final GenericDao<Integer, Profile> profileDao = new GenericDaoImpl<>(new Profile());
 
-    @Override
     public void doGet(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
         logger.debug("GET");
         int profileId = getParam(request, "id");
@@ -31,7 +30,6 @@ public class ProfileRestServiceImpl implements RestService<Profile> {
         response.setStatusCode(200);
     }
 
-    @Override
     public void doPut(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
         logger.debug("PUT");
         String body = request.getBody();
@@ -44,7 +42,6 @@ public class ProfileRestServiceImpl implements RestService<Profile> {
         response.setStatusCode(201);
     }
 
-    @Override
     public void doPost(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
         logger.debug("POST");
         String body = request.getBody();
@@ -59,7 +56,6 @@ public class ProfileRestServiceImpl implements RestService<Profile> {
         response.setStatusCode(200);
     }
 
-    @Override
     public void doDelete(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
         logger.debug("DELETE");
         int id = getParam(request, "id");
@@ -85,5 +81,7 @@ public class ProfileRestServiceImpl implements RestService<Profile> {
             }
         }
     }
+
+     */
 
 }

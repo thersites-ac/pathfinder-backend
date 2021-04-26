@@ -2,14 +2,13 @@ package cogbog;
 
 import cogbog.exception.BadHttpMethodException;
 import cogbog.exception.BadPathParametersException;
-import cogbog.model.Profile;
+import cogbog.exception.NotFoundException;
 import cogbog.service.RestService;
 import cogbog.service.impl.ProfileRestServiceImpl;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +19,7 @@ import java.util.Map;
 public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
     private static Map<String, String> defaultHeaders;
-    private static RestService<Profile> profileService;
+    private static ProfileRestServiceImpl profileService;
     static {
         defaultHeaders = new HashMap<>();
         defaultHeaders.put("Content-Type", "application/json");
@@ -35,11 +34,8 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
         response.setHeaders(defaultHeaders);
         try {
-            branchOnMethod(request, response);
+            branch(request, response);
         } catch (BadPathParametersException ex) {
-            logger.error(ex.toString());
-            response.setStatusCode(400);
-        } catch (JsonMappingException ex) {
             logger.error(ex.toString());
             response.setStatusCode(400);
         } catch (NoResultException ex) {
@@ -55,22 +51,38 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
         return response;
     }
 
-    private void branchOnMethod(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
-        String method = request.getHttpMethod();
-        switch (method) {
+    private void branch(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
+        String[] route = request.getPath().split("/");
+        // validate route here
+        String resource = route[0];
+        switch (resource) {
+            case "profile":
+                break;
+            default:
+                throw new NotFoundException(resource);
+        }
+    }
+
+    private void restfulRouting(RestService service, String[] route, String httpMethod, String body, APIGatewayProxyResponseEvent response) throws Exception {
+        switch (httpMethod) {
             case "GET":
-                profileService.doGet(request, response);
+                // validate route here
+                response.setBody(service.find(route[1]));
+                response.setStatusCode(200);
                 break;
             case "PUT":
-                profileService.doPut(request, response);
-                break;
+                String id = service.create(body);
+                response.setBody("{\"id\": \"" + id + "\"}");
+                response.setStatusCode(201);
             case "POST":
-                profileService.doPost(request, response);
-                break;
+                // validate route
+                service.update(route[1], body);
+                response.setStatusCode(200);
             case "DELETE":
-                profileService.doDelete(request, response);
+                // validate route
+                service.delete(route[1]);
             default:
-                throw new BadHttpMethodException("Unsupported: " + request.getHttpMethod());
+                throw new BadHttpMethodException(httpMethod);
         }
     }
 

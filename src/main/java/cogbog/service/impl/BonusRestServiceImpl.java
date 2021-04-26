@@ -7,19 +7,18 @@ import cogbog.model.Bonus;
 import cogbog.service.RestService;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class BonusRestServiceImpl implements RestService<Bonus> {
+public class BonusRestServiceImpl {
 
+    /*
     private static final Logger logger = LoggerFactory.getLogger(RestService.class);
 
     private GenericDao<Integer, Bonus> bonusDao = new GenericDaoImpl<>(new Bonus());
 
-    @Override
     public void doGet(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
         logger.debug("GET");
         int id = getParam(request, "id");
@@ -31,7 +30,6 @@ public class BonusRestServiceImpl implements RestService<Bonus> {
         response.setStatusCode(200);
     }
 
-    @Override
     public void doPut(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
         logger.debug("PUT");
         String body = request.getBody();
@@ -44,7 +42,6 @@ public class BonusRestServiceImpl implements RestService<Bonus> {
         response.setStatusCode(201);
     }
 
-    @Override
     public void doPost(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
         logger.debug("POST");
         String body = request.getBody();
@@ -59,7 +56,6 @@ public class BonusRestServiceImpl implements RestService<Bonus> {
         response.setStatusCode(200);
     }
 
-    @Override
     public void doDelete(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
         logger.debug("DELETE");
         int id = getParam(request, "id");
@@ -86,4 +82,6 @@ public class BonusRestServiceImpl implements RestService<Bonus> {
         }
     }
 
+
+     */
 }

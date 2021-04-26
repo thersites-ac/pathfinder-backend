@@ -1,28 +1,12 @@
 package cogbog.service;
 
-import cogbog.exception.BadHttpMethodException;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
-public interface RestService<T> {
+public interface RestService {
 
-    public default void doGet(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
-        throw new BadHttpMethodException(request.getHttpMethod());
-    }
+    public String create(String entity) throws Exception;
+    public String find(String key);
+    public String update(String key, String updates) throws Exception;
+    public void delete(String key) throws Exception;
 
-    public default void doPut(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
-        throw new BadHttpMethodException(request.getHttpMethod());
-    };
-
-    public default void doPost(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
-        throw new BadHttpMethodException(request.getHttpMethod());
-    }
-
-    public default void doDelete(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
-        throw new BadHttpMethodException(request.getHttpMethod());
-    }
-
-    public default void healthcheck(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) {
-        response.setStatusCode(200);
-    }
 }
