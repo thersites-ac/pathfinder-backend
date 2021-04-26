@@ -46,12 +46,7 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
         return System.getenv()
                 .entrySet()
                 .stream()
-                .filter(entry -> {
-                    boolean retain = envTransform.containsKey(entry.getKey());
-                    if (retain)
-                        logger.info("Override key found: {}", entry.getKey());
-                    return retain;
-                })
+                .filter(entry -> envTransform.containsKey(entry.getKey()))
                 .collect(Collectors.toMap(
                         entry -> envTransform.get(entry.getKey()),
                         Map.Entry::getValue
