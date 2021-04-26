@@ -1,7 +1,6 @@
 package cogbog.constant;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -21,11 +20,11 @@ public class ModTypeTests {
     }
 
     @Test
-    public void canSerialize() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValueAsString(STAT);
-        objectMapper.writeValueAsString(SAVE);
-        objectMapper.writeValueAsString(SKILL);
+    public void canSerialize() {
+        Gson gson = new Gson();
+        gson.toJson(STAT);
+        gson.toJson(SAVE);
+        gson.toJson(SKILL);
     }
 
     private static class JsonData implements Serializable {
@@ -37,17 +36,18 @@ public class ModTypeTests {
     }
 
     @Test
-    public void canDeserialize() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.readValue("{\"modType\": \"STAT\"}", JsonData.class);
-        objectMapper.readValue("{\"modType\": \"SAVE\"}", JsonData.class);
-        objectMapper.readValue("{\"modType\": \"SKILL\"}", JsonData.class);
+    public void canDeserialize() {
+        Gson gson = new Gson();
+        gson.fromJson("{\"modType\": \"STAT\"}", JsonData.class);
+        gson.fromJson("{\"modType\": \"SAVE\"}", JsonData.class);
+        gson.fromJson("{\"modType\": \"SKILL\"}", JsonData.class);
     }
 
-    @Test(expected = JsonProcessingException.class)
-    public void rejectsInvalidInstances() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.readValue("{\"modType\": \"DOGE\"}", JsonData.class);
+    @Test
+    public void rejectsInvalidInstances() {
+        Gson gson = new Gson();
+        JsonData data = gson.fromJson("{\"modType\": \"DOGE\"}", JsonData.class);
+        data = null;
     }
 
 }

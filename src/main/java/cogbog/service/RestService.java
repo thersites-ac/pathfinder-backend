@@ -1,7 +1,5 @@
 package cogbog.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 public interface RestService {
 
     public String create(String entity) throws Exception;
