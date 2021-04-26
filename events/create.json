@@ -1,0 +1,14 @@
+{
+  "body": "{\"characterClass\": \"investigator\"}",
+  "resource": "/{proxy+}",
+  "path": "/profile",
+  "httpMethod": "PUT",
+  "isBase64Encoded": false,
+  "queryStringParameters": {
+    "foo": "bar"
+  },
+  "headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json"
+  }
+}

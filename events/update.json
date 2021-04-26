@@ -1,0 +1,14 @@
+{
+  "body": "{\"characterName\": \"toby\"}",
+  "resource": "/{proxy+}",
+  "path": "/profile/5",
+  "httpMethod": "POST",
+  "isBase64Encoded": false,
+  "queryStringParameters": {
+    "foo": "bar"
+  },
+  "headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json"
+  }
+}

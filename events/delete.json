@@ -1,0 +1,9 @@
+{
+  "resource": "/{proxy+}",
+  "path": "/profile/5",
+  "httpMethod": "DELETE",
+  "isBase64Encoded": false,
+  "headers": {
+    "Accept": "application/json"
+  }
+}
