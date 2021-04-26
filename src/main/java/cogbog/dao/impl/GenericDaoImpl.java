@@ -8,17 +8,20 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.*;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K, V> {
 
     private static final String SELECT_QUERY_TEMPLATE = "Select x from %s x where x.%s = :id";
-    private String SELECT_QUERY;
     private static final Logger logger = LoggerFactory.getLogger(GenericDao.class);
-    private static final EntityManagerFactory ENTITY_MANAGER_FACTORY =
-            Persistence.createEntityManagerFactory("cogbog.pathfinder");
+    private static String SELECT_QUERY;
+    private static EntityManagerFactory ENTITY_MANAGER_FACTORY;
     private V witness;
 
+    // FIXME: 4/25/21 How can I validate e.g. the presence and type-correctness of the Id field?
     public GenericDaoImpl(V witness) {
         this.witness = witness;
         Optional<Field> idField = Arrays.stream(witness.getClass().getDeclaredFields())
@@ -29,10 +32,35 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
         SELECT_QUERY = String.format(SELECT_QUERY_TEMPLATE,
                 witness.getClass().getSimpleName(),
                 id.getName());
+        if (ENTITY_MANAGER_FACTORY == null) {
+            ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("cogbog.pathfinder", getConfigOverrides());
+        }
+    }
+
+    private Map<String, String> getConfigOverrides() {
+        Map<String, String> envTransform = new HashMap<>();
+        envTransform.put("DB_URL", "javax.persistence.jdbc.url");
+        envTransform.put("DB_USER", "javax.persistence.jdbc.user");
+        envTransform.put("DB_PASSWORD", "javax.persistence.jdbc.password");
+
+        return System.getenv()
+                .entrySet()
+                .stream()
+                .filter(entry -> {
+                    boolean retain = envTransform.containsKey(entry.getKey());
+                    if (retain)
+                        logger.info("Override key found: {}", entry.getKey());
+                    return retain;
+                })
+                .collect(Collectors.toMap(
+                        entry -> envTransform.get(entry.getKey()),
+                        Map.Entry::getValue
+                ));
     }
 
     @Override
     public K create(V value) throws Exception {
+        logger.info("Creating {}", value.toString());
         EntityManager manager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
@@ -40,6 +68,7 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
             transaction.begin();
             manager.persist(value);
             transaction.commit();
+            logger.info("Created {}", value.toString());
         } catch (Exception ex) {
             rollback(transaction, ex);
         } finally {
@@ -50,6 +79,7 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
 
     @Override
     public V find(K key) {
+        logger.info("Finding entity {}", key.toString());
         EntityManager manager = ENTITY_MANAGER_FACTORY.createEntityManager();
         V entity;
         try {
@@ -65,6 +95,7 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
 
     @Override
     public V update(K key, V updates) throws Exception {
+        logger.info("Updating entity " + key.toString() + " with properties {}", updates.toString());
         EntityManager manager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         V original = null;
@@ -77,6 +108,7 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
             original.superimpose(updates);
             manager.persist(original);
             transaction.commit();
+            logger.info("Updated entity {}", original.toString());
         } catch (Exception ex) {
             rollback(transaction, ex);
         } finally {
@@ -87,6 +119,7 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
 
     @Override
     public void delete(K key) throws Exception {
+        logger.info("Deleting entity {}", key.toString());
         EntityManager manager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
@@ -97,6 +130,7 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
             V value = (V) query.getSingleResult();
             manager.remove(value);
             transaction.commit();
+            logger.info("Deleted entity {}", key.toString());
         } catch (Exception ex) {
             rollback(transaction, ex);
         } finally {
@@ -105,8 +139,10 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
     }
 
     private void rollback(EntityTransaction transaction, Exception ex) throws Exception {
-        if (transaction != null)
+        if (transaction != null) {
+            logger.error("Rolling back a transaction");
             transaction.rollback();
+        }
         logger.error(ex.toString());
         throw ex;
     }
