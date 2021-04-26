@@ -1,7 +1,7 @@
 package cogbog.service.impl;
 
-import cogbog.dao.BonusDao;
-import cogbog.dao.impl.BonusDaoImpl;
+import cogbog.dao.GenericDao;
+import cogbog.dao.impl.GenericDaoImpl;
 import cogbog.exception.BadPathParametersException;
 import cogbog.model.Bonus;
 import cogbog.service.RestService;
@@ -17,7 +17,7 @@ public class BonusRestServiceImpl implements RestService<Bonus> {
 
     private static final Logger logger = LoggerFactory.getLogger(RestService.class);
 
-    private BonusDao bonusDao = new BonusDaoImpl();
+    private GenericDao<Integer, Bonus> bonusDao = new GenericDaoImpl<>(new Bonus());
 
     @Override
     public void doGet(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
@@ -25,7 +25,7 @@ public class BonusRestServiceImpl implements RestService<Bonus> {
         int id = getParam(request, "id");
         logger.info("bonus id: {}", id);
 
-        Bonus bonus = bonusDao.findBonus(id);
+        Bonus bonus = bonusDao.find(id);
         ObjectMapper objectMapper = new ObjectMapper();
         response.setBody(objectMapper.writeValueAsString(bonus));
         response.setStatusCode(200);
@@ -39,7 +39,7 @@ public class BonusRestServiceImpl implements RestService<Bonus> {
         ObjectMapper objectMapper = new ObjectMapper();
         Bonus bonus = objectMapper.readValue(body, Bonus.class);
 
-        bonusDao.createBonus(bonus);
+        bonusDao.create(bonus);
         response.setBody(objectMapper.writeValueAsString(bonus));
         response.setStatusCode(201);
     }
@@ -54,7 +54,7 @@ public class BonusRestServiceImpl implements RestService<Bonus> {
         ObjectMapper objectMapper = new ObjectMapper();
         Bonus bonus = objectMapper.readValue(body, Bonus.class);
 
-        bonus = bonusDao.updateBonus(id, bonus);
+        bonus = bonusDao.update(id, bonus);
         response.setBody(objectMapper.writeValueAsString(bonus));
         response.setStatusCode(200);
     }
@@ -65,7 +65,7 @@ public class BonusRestServiceImpl implements RestService<Bonus> {
         int id = getParam(request, "id");
         logger.info("bonus id: {}", id);
 
-        bonusDao.deleteBonus(id);
+        bonusDao.delete(id);
         response.setStatusCode(200);
     }
 

@@ -1,8 +1,8 @@
 package cogbog.service.impl;
 
+import cogbog.dao.GenericDao;
+import cogbog.dao.impl.GenericDaoImpl;
 import cogbog.model.Profile;
-import cogbog.dao.ProfileDao;
-import cogbog.dao.impl.ProfileDaoImpl;
 import cogbog.exception.BadPathParametersException;
 import cogbog.service.RestService;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
@@ -17,7 +17,7 @@ public class ProfileRestServiceImpl implements RestService<Profile> {
 
     private static final Logger logger = LoggerFactory.getLogger(RestService.class);
 
-    private ProfileDao profileDao = new ProfileDaoImpl();
+    private final GenericDao<Integer, Profile> profileDao = new GenericDaoImpl<>(new Profile());
 
     @Override
     public void doGet(APIGatewayProxyRequestEvent request, APIGatewayProxyResponseEvent response) throws Exception {
@@ -25,7 +25,7 @@ public class ProfileRestServiceImpl implements RestService<Profile> {
         int profileId = getParam(request, "id");
         logger.info("profile id: {}", profileId);
 
-        Profile profile = profileDao.findProfile(profileId);
+        Profile profile = profileDao.find(profileId);
         ObjectMapper objectMapper = new ObjectMapper();
         response.setBody(objectMapper.writeValueAsString(profile));
         response.setStatusCode(200);
@@ -39,7 +39,7 @@ public class ProfileRestServiceImpl implements RestService<Profile> {
         ObjectMapper objectMapper = new ObjectMapper();
         Profile profile = objectMapper.readValue(body, Profile.class);
 
-        profileDao.createProfile(profile);
+        profileDao.create(profile);
         response.setBody(objectMapper.writeValueAsString(profile));
         response.setStatusCode(201);
     }
@@ -54,7 +54,7 @@ public class ProfileRestServiceImpl implements RestService<Profile> {
         ObjectMapper objectMapper = new ObjectMapper();
         Profile profile = objectMapper.readValue(body, Profile.class);
 
-        profile = profileDao.updateProfile(profileId, profile);
+        profile = profileDao.update(profileId, profile);
         response.setBody(objectMapper.writeValueAsString(profile));
         response.setStatusCode(200);
     }
@@ -65,7 +65,7 @@ public class ProfileRestServiceImpl implements RestService<Profile> {
         int id = getParam(request, "id");
         logger.info("profile id: {}", id);
 
-        profileDao.deleteProfile(id);
+        profileDao.delete(id);
         response.setStatusCode(200);
     }
 

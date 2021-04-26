@@ -1,18 +1,18 @@
 package cogbog.model;
 
+import cogbog.dao.DaoData;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "PROFILE")
-public class Profile implements Serializable {
+public class Profile implements Serializable, DaoData<Integer, Profile> {
 
     private static final long serialVersionUID = 3989051774004729369L;
 
@@ -70,6 +70,11 @@ public class Profile implements Serializable {
         reflex = profile.reflex == null ? reflex : profile.reflex;
         will = profile.will == null ? will : profile.will;
         bonuses = profile.bonuses == null ? bonuses : profile.bonuses;
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
     }
 
 }

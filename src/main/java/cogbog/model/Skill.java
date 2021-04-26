@@ -1,7 +1,7 @@
 package cogbog.model;
 
+import cogbog.dao.DaoData;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Entity
 @Data
 @Table(name = "SKILL")
-public class Skill implements Serializable {
+public class Skill implements Serializable, DaoData<Integer, Skill> {
 
     private static final long serialVersionUID = 1037748963692030350L;
 
@@ -30,11 +30,17 @@ public class Skill implements Serializable {
     @Column
     private Integer owner;
 
+    @Override
     public void superimpose(Skill skill) {
         assert skill.getId() == id;
         name = skill.name == null? name: skill.name;
         points = skill.points == null? points: skill.points;
         owner = skill.owner == null? owner: skill.owner;
+    }
+
+    @Override
+    public Integer getId() {
+        return  id;
     }
 
 }

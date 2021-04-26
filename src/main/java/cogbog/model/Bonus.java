@@ -1,6 +1,7 @@
 package cogbog.model;
 
 import cogbog.constant.ModType;
+import cogbog.dao.DaoData;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "BONUS")
-public class Bonus implements Serializable {
+public class Bonus implements Serializable, DaoData<Integer, Bonus> {
 
     private static final long serialVersionUID = -7874071456729262021L;
 
@@ -31,10 +32,16 @@ public class Bonus implements Serializable {
     @Column
     private Integer owner;
 
+    @Override
     public void superimpose(Bonus bonus) {
         assert id == bonus.id;
         type = bonus.type == null? type: bonus.type;
         name = bonus.name == null? name: bonus.name;
         isTemporary = bonus.isTemporary == null? isTemporary: bonus.isTemporary;
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
     }
 }
