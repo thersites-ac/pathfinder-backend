@@ -1,15 +1,26 @@
 provider "aws" {
-  region = "us-east-2"
+  access_key = "foo"
+  region = "us-east-1"
+  secret_key = "bar"
+  skip_credentials_validation = true
+  skip_requesting_account_id = true
+
+  endpoints {
+    lambda = var.localstack
+    ec2 = var.localstack
+    route53 = var.localstack
+    cloudwatch = var.localstack
+    cloudwatchlogs = var.localstack
+    iam = var.localstack
+  }
 }
 
 module "lambda_endpoint" {
   source = "../modules/endpoint"
   stage_name = var.stage_name
   jarfile = "../../target/tomblywombly.jar"
-  DB_USER = var.DB_USER
-  DB_PASSWORD = var.DB_PASSWORD
-  DB_URL = var.DB_URL
 }
+
 
 output "invoke_url" {
   value = module.lambda_endpoint.invoke_url

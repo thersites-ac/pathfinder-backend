@@ -14,3 +14,20 @@ variable "jarfile" {
   default = "URI of code to upload"
 }
 
+variable "DB_USER" {
+  type = string
+  description = "Username for pathfinder profiles database"
+  default = "pathfinder"
+}
+
+variable "DB_PASSWORD" {
+  type = string
+  description = "Password for pathfinder profiles database"
+  default = "pathfinder"
+}
+
+variable "DB_URL" {
+  type = string
+  description = "JDBC connection string for pathfinder profiles database"
+  default = "jdbc:mysql://mysql/pathfinder"
+}

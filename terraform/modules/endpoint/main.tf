@@ -28,6 +28,15 @@ resource "aws_lambda_function" "pathfinder_backend" {
     aws_cloudwatch_log_group.pathfinder_backend_logs,
     aws_iam_role_policy_attachment.lambda_logging_attachment
   ]
+  memory_size = 512
+  timeout = 5
+  environment {
+    variables = {
+      DB_PASSWORD = var.DB_PASSWORD
+      DB_URL = var.DB_URL
+      DB_USER = var.DB_USER
+    }
+  }
 }
 
 resource "aws_iam_policy" "lambda_logging" {
@@ -86,6 +95,9 @@ resource "aws_api_gateway_method" "proxy" {
   resource_id = aws_api_gateway_resource.proxy.id
   http_method = "ANY"
   authorization = "NONE"
+  request_parameters = {
+    "method.request.path.proxy" = true
+  }
 }
 
 resource "aws_api_gateway_method_response" "proxy_response" {
@@ -102,6 +114,12 @@ resource "aws_api_gateway_integration" "lambda" {
   rest_api_id = aws_api_gateway_rest_api.pathfinder_backend_api.id
   resource_id = aws_api_gateway_method.proxy.resource_id
   http_method = aws_api_gateway_method.proxy.http_method
+
+  cache_key_parameters = [
+    "method.request.path.proxy"
+  ]
+
+  content_handling = "CONVERT_TO_TEXT"
 
   integration_http_method = "POST"
   type = "AWS_PROXY"
