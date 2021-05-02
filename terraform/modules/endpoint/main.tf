@@ -71,17 +71,17 @@ resource "aws_cloudwatch_log_group" "pathfinder_backend_logs" {
   retention_in_days = 14
 }
 
+resource "aws_api_gateway_rest_api" "pathfinder_backend_api" {
+  name = var.name
+  description = "Data persistence layer for Pathfinder profile management app"
+}
+
 resource "aws_lambda_permission" "apigw" {
   statement_id = "AllowApiGatewayInvoke"
   action = "lambda:InvokeFunction"
   function_name = aws_lambda_function.pathfinder_backend.function_name
   principal = "apigateway.amazonaws.com"
   source_arn = "${aws_api_gateway_rest_api.pathfinder_backend_api.execution_arn}/*/*"
-}
-
-resource "aws_api_gateway_rest_api" "pathfinder_backend_api" {
-  name = var.name
-  description = "Data persistence layer for Pathfinder profile management app"
 }
 
 resource "aws_api_gateway_resource" "proxy" {

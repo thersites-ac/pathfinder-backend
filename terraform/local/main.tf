@@ -4,6 +4,7 @@ provider "aws" {
   secret_key = "bar"
   skip_credentials_validation = true
   skip_requesting_account_id = true
+  skip_metadata_api_check = true
 
   endpoints {
     lambda = var.localstack
@@ -12,6 +13,7 @@ provider "aws" {
     cloudwatch = var.localstack
     cloudwatchlogs = var.localstack
     iam = var.localstack
+    apigateway = var.localstack
   }
 }
 
@@ -23,7 +25,7 @@ module "lambda_endpoint" {
 
 
 output "invoke_url" {
-  value = module.lambda_endpoint.invoke_url
+  value = "http://localhost:4566/restapis/${module.lambda_endpoint.rest_api_id}/${var.stage_name}/_user_request_"
 }
 
 output "rest_api_id" {
