@@ -18,12 +18,12 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
     private static final String SELECT_QUERY_TEMPLATE = "Select x from %s x where x.%s = :id";
     private static final Logger logger = LoggerFactory.getLogger(GenericDao.class);
     private final String SELECT_QUERY;
-    private static EntityManagerFactory ENTITY_MANAGER_FACTORY;
+    private final EntityManagerFactory ENTITY_MANAGER_FACTORY;
 
     private final Class<V> type;
 
-    // FIXME: 4/25/21 Validate the presence, uniqueness, and type-correctness of the Id field
     public GenericDaoImpl(Class<V> type) {
+        logger.info("Initializing a new GenericDaoImpl");
         this.type = type;
         Optional<Field> maybeId = Arrays.stream(type.getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(Id.class))
@@ -33,12 +33,10 @@ public class GenericDaoImpl<K, V extends DaoData<K, V>> implements GenericDao<K,
         SELECT_QUERY = String.format(SELECT_QUERY_TEMPLATE,
                 type.getSimpleName(),
                 id.getName());
-        if (ENTITY_MANAGER_FACTORY == null) {
-            ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("cogbog.pathfinder", getConfigOverrides());
-        }
+        ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("cogbog.pathfinder", getConfigOpinions());
     }
 
-    private Map<String, String> getConfigOverrides() {
+    private Map<String, String> getConfigOpinions() {
         Map<String, String> envTransform = new HashMap<>();
         envTransform.put("DB_URL", "javax.persistence.jdbc.url");
         envTransform.put("DB_USER", "javax.persistence.jdbc.user");

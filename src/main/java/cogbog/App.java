@@ -39,7 +39,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
 
         try {
             branch(request, response);
-        } catch (BadPathParametersException | JsonProcessingException ex) {
+        } catch (NumberFormatException | BadPathParametersException | JsonProcessingException ex) {
             logger.error(ex.toString());
             response.setStatusCode(400);
         } catch (NoResultException | NotFoundException ex) {
@@ -52,6 +52,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             logger.error(ex.toString());
             response.setStatusCode(500);
         }
+        logger.info("Response: {}", response.toString());
         return response;
     }
 

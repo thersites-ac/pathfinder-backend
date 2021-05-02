@@ -9,6 +9,7 @@ Backend for managing Pathfinder profile data, built for AWS Lambda infra, for a 
 * AWS SAM CLI
 * some Java JDK
 * maven
+* terraform (optional)
 
 ### One-time setup
 Run:
@@ -53,3 +54,5 @@ The switch `-d 5005` sets the debug port. Whenever a request comes in now, SAM w
 ### TODO
 * incorporate Guice or some other dependency injection
 * address fixmes littered throughout
+* update terraform files to provision all four routes
+* document terraform usage

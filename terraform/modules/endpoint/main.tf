@@ -88,32 +88,28 @@ resource "aws_api_gateway_method" "proxy" {
   authorization = "NONE"
 }
 
+resource "aws_api_gateway_method_response" "proxy_response" {
+  http_method = aws_api_gateway_method.proxy.http_method
+  resource_id = aws_api_gateway_resource.proxy.id
+  rest_api_id = aws_api_gateway_rest_api.pathfinder_backend_api.id
+  status_code = "200"
+  response_models = {
+    "application/json" = "Empty"
+  }
+}
+
 resource "aws_api_gateway_integration" "lambda" {
   rest_api_id = aws_api_gateway_rest_api.pathfinder_backend_api.id
-  http_method = aws_api_gateway_method.proxy.http_method
   resource_id = aws_api_gateway_method.proxy.resource_id
+  http_method = aws_api_gateway_method.proxy.http_method
 
   integration_http_method = "POST"
   type = "AWS_PROXY"
   uri = aws_lambda_function.pathfinder_backend.invoke_arn
+  depends_on = [
+    aws_lambda_function.pathfinder_backend
+  ]
 }
-
-//resource "aws_api_gateway_method" "proxy_root" {
-//  rest_api_id = aws_api_gateway_rest_api.pathfinder_backend_api.root_resource_id
-//  resource_id = aws_api_gateway_resource.proxy.id
-//  http_method = "ANY"
-//  authorization = "NONE"
-//}
-//
-//resource "aws_api_gateway_integration" "lambda_root" {
-//  rest_api_id = aws_api_gateway_rest_api.pathfinder_backend_api.id
-//  http_method = aws_api_gateway_method.proxy_root.http_method
-//  resource_id = aws_api_gateway_method.proxy_root.resource_id
-//
-//  integration_http_method = "POST"
-//  type = "AWS_PROXY"
-//  uri = aws_lambda_function.pathfinder_backend.invoke_arn
-//}
 
 resource "aws_api_gateway_deployment" "deployment" {
   depends_on = [
@@ -122,3 +118,5 @@ resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = aws_api_gateway_rest_api.pathfinder_backend_api.id
   stage_name = var.stage_name
 }
+
+
